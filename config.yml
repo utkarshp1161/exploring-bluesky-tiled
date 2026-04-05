@@ -1,0 +1,11 @@
+trees:
+  - path: /
+    tree: tiled.catalog:from_uri
+    args:
+      uri: sqlite:////tmp/tiled_catalog.db
+      readable_storage:
+        - ./data/
+      adapters_by_mimetype:
+        application/x-emd: custom:EMDAdapter
+
+
