@@ -131,6 +131,11 @@ PYTHONPATH=/path/to/your/project \
   uv run tiled serve config --public config.yml --api-key secret
 ```
 
+```powershell
+$env:PYTHONPATH = "C:\Users\utkarsh_dev\Documents\projects\exploring-bluesky-tiled"
+uv run tiled serve config --public config.yml --api-key secret
+```
+
 - `PYTHONPATH` — needed so Tiled can find your `custom.py`
 - `--public` — allows unauthenticated read access
 - `--api-key` — sets a simple API key for write/admin operations
@@ -145,11 +150,21 @@ Registration crawls the data directory and records each file in the catalog data
 
 ```bash
 PYTHONPATH=/path/to/your/project \
-  tiled register http://localhost:8000 \
+uv run   tiled register http://localhost:8000 \
   --api-key secret \
   --verbose \
   --ext '.emd=application/x-emd' \
   --adapter 'application/x-emd=custom:EMDAdapter' \
+  ./data/
+```
+
+```powershell
+$env:PYTHONPATH = "C:\Users\utkarsh_dev\Documents\projects\exploring-bluesky-tiled"
+uv run tiled register http://localhost:8000 `
+  --api-key secret `
+  --verbose `
+  --ext ".emd=application/x-emd" `
+  --adapter "application/x-emd=custom:EMDAdapter" `
   ./data/
 ```
 
@@ -170,6 +185,17 @@ PYTHONPATH=/path/to/your/project \
   --ext '.emd=application/x-emd' \
   --adapter 'application/x-emd=custom:EMDAdapter' \
   --watch \
+  ./data/
+```
+
+```powershell
+$env:PYTHONPATH = "C:\Users\utkarsh_dev\Documents\projects\exploring-bluesky-tiled"
+uv run tiled register http://localhost:8000 `
+  --api-key secret `
+  --verbose `
+  --ext ".emd=application/x-emd" `
+  --adapter "application/x-emd=custom:EMDAdapter" `
+  --watch `
   ./data/
 ```
 

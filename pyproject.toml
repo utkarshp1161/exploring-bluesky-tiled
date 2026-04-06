@@ -1,40 +1,12 @@
 [project]
 name = "exploring-bluesky-tiled"
 version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "aiosqlite>=0.22.1",
-    "alembic>=1.18.4",
-    "asgi-correlation-id>=4.3.4",
-    "awkward>=2.9.0",
-    "cachetools>=7.0.5",
-    "canonicaljson>=2.0.0",
-    "entrypoints>=0.4",
     "exspy>=0.3.2",
-    "fastapi>=0.135.1",
-    "greenlet>=3.3.2",
-    "hdf5plugin>=6.0.0",
     "hyperspy>=2.4.0",
-    "jmespath>=1.1.0",
-    "ndindex>=1.10.1",
-    "numcodecs>=0.16.5",
-    "numpy>=2.4.3",
-    "packaging>=26.0",
-    "pandas>=3.0.1",
-    "prometheus-client>=0.24.1",
-    "pyarrow>=23.0.1",
-    "python-dateutil>=2.9.0.post0",
-    "python-jose[cryptography]>=3.5.0",
-    "redis>=7.3.0",
-    "scifireaders>=0.12.4",
-    "sidpy>=0.12.8",
-    "sparse>=0.18.0",
-    "sqlalchemy>=2.0.48",
-    "stamina>=25.2.0",
-    "starlette>=0.52.1",
-    "tifffile>=2026.3.3",
-    "tiled>=0.2.8",
-    "uvicorn>=0.42.0",
-    "watchfiles>=1.1.1",
-    "xarray>=2026.2.0",
+    "ipykernel>=7.2.0",
+    "tiled[all]>=0.2.9",
 ]

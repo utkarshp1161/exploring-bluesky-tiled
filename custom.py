@@ -7,11 +7,6 @@ import numpy as np
 import hyperspy.api as hs
 from tiled.adapters.mapping import MapAdapter
 
-import numpy as np
-import SciFiReaders
-from urllib.parse import urlparse
-from tiled.adapters.array import ArrayAdapter
-from tiled.adapters.mapping import MapAdapter
 
 
 # class EMDAdapter(MapAdapter):
@@ -48,17 +43,21 @@ from tiled.adapters.mapping import MapAdapter
 #         data_uri = data_source.assets[0].data_uri
 #         return cls.from_uris(data_uri, metadata=metadata, **kwargs)
 
-import numpy as np
 import hyperspy.api as hs
-from urllib.parse import urlparse
-from tiled.adapters.array import ArrayAdapter
-from tiled.adapters.mapping import MapAdapter
+import os
+from pathlib import Path
+
 
 class EMDAdapter(MapAdapter):
     @classmethod
     def from_uris(cls, data_uri, metadata=None, **kwargs):
         filepath = urlparse(data_uri).path
-        
+        # fix Windows path: /C:/Users/... -> C:/Users/...
+        if os.name == 'nt' and filepath.startswith('/'): # strips the leading / on Windows only
+            # os.name == 'nt' does — 'nt' is Windows, 'posix' is Mac/Linux.
+            filepath = filepath.lstrip('/')
+        filepath = str(Path(filepath))
+
         signals = hs.load(filepath)
         if not isinstance(signals, list):
             signals = [signals]

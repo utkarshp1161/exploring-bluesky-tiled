@@ -2,7 +2,7 @@ trees:
   - path: /
     tree: tiled.catalog:from_uri
     args:
-      uri: sqlite:////tmp/tiled_catalog.db
+      uri: sqlite+aiosqlite:///catalog.db
       readable_storage:
         - ./data/
       adapters_by_mimetype:
