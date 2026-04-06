@@ -128,12 +128,12 @@ The path must match the `uri` in your `config.yml`.
 
 ```bash
 PYTHONPATH=/path/to/your/project \
-  uv run tiled serve config --public config.yml --api-key secret
+  uv run tiled serve config --public config.yml --api-key secret --host 0.0.0.0 --port 8000
 ```
 
 ```powershell
 $env:PYTHONPATH = "C:\Users\utkarsh_dev\Documents\projects\exploring-bluesky-tiled"
-uv run tiled serve config --public config.yml --api-key secret
+uv run tiled serve config --public config.yml --api-key secret --host 0.0.0.0 --port 8000
 ```
 
 - `PYTHONPATH` — needed so Tiled can find your `custom.py`
@@ -147,36 +147,6 @@ Server runs at `http://localhost:8000` by default.
 ## Step 5: Register Your Data
 
 Registration crawls the data directory and records each file in the catalog database. **This is separate from serving** — you can add new files to a running server without restarting it.
-
-```bash
-PYTHONPATH=/path/to/your/project \
-uv run   tiled register http://localhost:8000 \
-  --api-key secret \
-  --verbose \
-  --ext '.emd=application/x-emd' \
-  --adapter 'application/x-emd=custom:EMDAdapter' \
-  ./data/
-```
-
-```powershell
-$env:PYTHONPATH = "C:\Users\utkarsh_dev\Documents\projects\exploring-bluesky-tiled"
-uv run tiled register http://localhost:8000 `
-  --api-key secret `
-  --verbose `
-  --ext ".emd=application/x-emd" `
-  --adapter "application/x-emd=custom:EMDAdapter" `
-  ./data/
-```
-
-- `--ext` — maps file extension to mimetype
-- `--adapter` — maps mimetype to adapter class (used during registration to validate files)
-- `--verbose` — shows which files were registered or skipped
-
-You do **not** need to re-run this on server restart — the catalog persists in SQLite.
-
-### Watch for New Files Automatically
-
-Use `--watch` to keep the process running and auto-register new files as they are dropped in:
 
 ```bash
 PYTHONPATH=/path/to/your/project \
@@ -199,9 +169,15 @@ uv run tiled register http://localhost:8000 `
   ./data/
 ```
 
-Run this in a second terminal alongside the server.
+- `--ext` — maps file extension to mimetype
+- `--adapter` — maps mimetype to adapter class (used during registration to validate files)
+- `--verbose` — shows which files were registered or skipped
+Use `--watch` to keep the process running and auto-register new files as they are dropped in:
 
----
+
+You do **not** need to re-run this on server restart — the catalog persists in SQLite.
+
+
 
 ## How Tiled Works Under the Hood
 
