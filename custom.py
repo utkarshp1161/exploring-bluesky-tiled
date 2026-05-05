@@ -48,31 +48,72 @@ import os
 from pathlib import Path
 
 
+# class EMDAdapter(MapAdapter):
+#     @classmethod
+#     def from_uris(cls, data_uri, metadata=None, **kwargs):
+#         filepath = urlparse(data_uri).path
+#         # fix Windows path: /C:/Users/... -> C:/Users/...
+#         if os.name == 'nt' and filepath.startswith('/'): # strips the leading / on Windows only
+#             # os.name == 'nt' does — 'nt' is Windows, 'posix' is Mac/Linux.
+#             filepath = filepath.lstrip('/')
+#         filepath = str(Path(filepath))
+
+#         signals = hs.load(filepath)
+#         if not isinstance(signals, list):
+#             signals = [signals]
+        
+#         children = {}
+#         for i, signal in enumerate(signals):
+#             array_data = signal.data
+#             file_metadata = dict(signal.metadata.as_dictionary())
+#             key = signal.metadata.General.title or str(i)
+#             children[key] = ArrayAdapter.from_array(array_data, metadata=file_metadata)
+        
+#         return cls(children)
+
+#     @classmethod
+#     def from_catalog(cls, data_source, metadata=None, **kwargs):
+#         # DataSource object has a .assets attribute, each asset has a .data_uri
+#         data_uri = data_source.assets[0].data_uri
+#         return cls.from_uris(data_uri, metadata=metadata, **kwargs)
+
 class EMDAdapter(MapAdapter):
     @classmethod
     def from_uris(cls, data_uri, metadata=None, **kwargs):
         filepath = urlparse(data_uri).path
-        # fix Windows path: /C:/Users/... -> C:/Users/...
-        if os.name == 'nt' and filepath.startswith('/'): # strips the leading / on Windows only
-            # os.name == 'nt' does — 'nt' is Windows, 'posix' is Mac/Linux.
-            filepath = filepath.lstrip('/')
+
+        if os.name == "nt" and filepath.startswith("/"):
+            filepath = filepath.lstrip("/")
+
         filepath = str(Path(filepath))
 
-        signals = hs.load(filepath)
+        # Critical change: lazy=True
+        signals = hs.load(filepath, lazy=True)
+
         if not isinstance(signals, list):
             signals = [signals]
-        
+
         children = {}
+
         for i, signal in enumerate(signals):
-            array_data = signal.data
-            file_metadata = dict(signal.metadata.as_dictionary())
             key = signal.metadata.General.title or str(i)
-            children[key] = ArrayAdapter.from_array(array_data, metadata=file_metadata)
-        
+
+            # Should be lazy/dask-backed if HyperSpy supports lazy loading for this file
+            array_data = signal.data
+
+            try:
+                file_metadata = signal.metadata.as_dictionary()
+            except Exception:
+                file_metadata = {}
+
+            children[key] = ArrayAdapter.from_array(
+                array_data,
+                metadata=file_metadata,
+            )
+
         return cls(children)
 
     @classmethod
     def from_catalog(cls, data_source, metadata=None, **kwargs):
-        # DataSource object has a .assets attribute, each asset has a .data_uri
         data_uri = data_source.assets[0].data_uri
         return cls.from_uris(data_uri, metadata=metadata, **kwargs)
