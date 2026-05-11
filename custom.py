@@ -1,12 +1,13 @@
 import numpy as np
-import SciFiReaders
+# import SciFiReaders
 from tiled.adapters.array import ArrayAdapter
 from urllib.parse import urlparse
 
-import numpy as np
 import hyperspy.api as hs
 from tiled.adapters.mapping import MapAdapter
-
+import hyperspy.api as hs
+import os
+from pathlib import Path
 
 
 # class EMDAdapter(MapAdapter):
@@ -43,9 +44,7 @@ from tiled.adapters.mapping import MapAdapter
 #         data_uri = data_source.assets[0].data_uri
 #         return cls.from_uris(data_uri, metadata=metadata, **kwargs)
 
-import hyperspy.api as hs
-import os
-from pathlib import Path
+
 
 
 # class EMDAdapter(MapAdapter):
@@ -76,6 +75,14 @@ from pathlib import Path
 #         # DataSource object has a .assets attribute, each asset has a .data_uri
 #         data_uri = data_source.assets[0].data_uri
 #         return cls.from_uris(data_uri, metadata=metadata, **kwargs)
+import os
+from pathlib import Path
+from urllib.parse import urlparse
+
+import hyperspy.api as hs
+from tiled.adapters.array import ArrayAdapter
+from tiled.adapters.mapping import MapAdapter
+
 
 class EMDAdapter(MapAdapter):
     @classmethod
@@ -87,7 +94,7 @@ class EMDAdapter(MapAdapter):
 
         filepath = str(Path(filepath))
 
-        # Critical change: lazy=True
+        # Important: lazy loading
         signals = hs.load(filepath, lazy=True)
 
         if not isinstance(signals, list):
@@ -98,17 +105,9 @@ class EMDAdapter(MapAdapter):
         for i, signal in enumerate(signals):
             key = signal.metadata.General.title or str(i)
 
-            # Should be lazy/dask-backed if HyperSpy supports lazy loading for this file
-            array_data = signal.data
-
-            try:
-                file_metadata = signal.metadata.as_dictionary()
-            except Exception:
-                file_metadata = {}
-
             children[key] = ArrayAdapter.from_array(
-                array_data,
-                metadata=file_metadata,
+                signal.data,
+                metadata=signal.metadata.as_dictionary(),
             )
 
         return cls(children)

@@ -4,7 +4,7 @@ trees:
     args:
       uri: sqlite+aiosqlite:///catalog.db
       readable_storage:
-        - ./data/
+        -  D:\microscopedata
       adapters_by_mimetype:
         application/x-emd: custom:EMDAdapter
 

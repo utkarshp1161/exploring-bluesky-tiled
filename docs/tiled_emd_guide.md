@@ -109,18 +109,7 @@ trees:
 
 ## Step 3: Initialize the Catalog Database
 
-Run this **once** to create the empty SQLite catalog:
-
-```bash
-tiled catalog init sqlite+aiosqlite:////tmp/tiled_catalog.db
-```
-
-The path must match the `uri` in your `config.yml`.
-
-> **Note:** `/tmp/` is cleared on reboot on most systems. For a permanent catalog, use a path inside your project instead:
-> ```bash
-> tiled catalog init sqlite+aiosqlite:////Users/you/project/catalog.db
-> ```
+uv run tiled catalog init sqlite+aiosqlite:///catalog.db
 
 ---
 
@@ -134,6 +123,11 @@ PYTHONPATH=/path/to/your/project \
 ```powershell
 $env:PYTHONPATH = "C:\Users\utkarsh_dev\Documents\projects\exploring-bluesky-tiled"
 uv run tiled serve config --public config.yml --api-key secret --host 0.0.0.0 --port 8000
+```
+
+```powershell
+$env:PYTHONPATH = "C:\new\exploring-bluesky-tiled-main"
+uv run tiled serve config --public config.yml --api-key secret --host 0.0.0.0 --port 9091
 ```
 
 - `PYTHONPATH` — needed so Tiled can find your `custom.py`
@@ -168,6 +162,41 @@ uv run tiled register http://localhost:8000 `
   --watch `
   ./data/
 ```
+
+```powershell
+$env:PYTHONPATH = "C:\new\exploring-bluesky-tiled-main"
+uv run tiled register http://localhost:9091 `
+  --api-key secret `
+  --verbose `
+  --ext ".emd=application/x-emd" `
+  --adapter "application/x-emd=custom:EMDAdapter" `
+  --watch `
+  D:\microscopedata
+```
+
+
+```powershell
+$env:PYTHONPATH = "C:\new\exploring-bluesky-tiled-main"
+uv run tiled register http://localhost:9091 `
+  --api-key secret `
+  --verbose `
+  --ext ".emd=application/x-emd" `
+  --adapter "application/x-emd=custom:EMDAdapter" `
+  --keep-ext `
+  --include-ext ".emd" `
+  --watch `
+  D:\microscopedata
+```
+Get-ChildItem D:\microscopedata -Recurse -Directory | ForEach-Object {
+    uv run tiled register http://localhost:9091 `
+      --api-key secret `
+      --verbose `
+      --ext ".emd=application/x-emd" `
+      --adapter "application/x-emd=custom:EMDAdapter" `
+      --keep-ext `
+      --include-ext ".emd" `
+      $_.FullName
+}
 
 - `--ext` — maps file extension to mimetype
 - `--adapter` — maps mimetype to adapter class (used during registration to validate files)
@@ -275,3 +304,21 @@ signal.plot()
 | `'DataSource' object is not subscriptable` | `from_catalog` receives a `DataSource`, not a list | Use `data_source.assets[0].data_uri` |
 | `signal_type='EDS_TEM' not understood` | HyperSpy EDS extension missing | `uv add exspy` — harmless warning otherwise |
 | `'dict' object has no attribute 'original_metadata'` | Reader returns a dict not a sidpy.Dataset | Iterate dict items instead of list |
+
+# Extra:
+git clone https://github.com/utkarshp1161/tiled.git
+Remove-Item -Recurse -Force .\.venv\Lib\site-packages\awkward_cpp*
+Remove-Item -Recurse -Force .\.venv\Lib\site-packages\awkward*
+uv pip install awkward awkward-cpp
+uv pip install -e ".\tiled[all]"
+
+- build react app
+- install nodejs if you dont have in the system - go to nodejs.org
+cd C:\new\exploring-bluesky-tiled-main\tiled\web-frontend
+npm install
+npm run build
+
+cd C:\new\exploring-bluesky-tiled-main\tiled
+Remove-Item -Recurse -Force .\share\tiled\ui -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Force .\share\tiled | Out-Null
+Copy-Item -Recurse .\web-frontend\dist .\share\tiled\ui

@@ -8,5 +8,4 @@ dependencies = [
     "exspy>=0.3.2",
     "hyperspy>=2.4.0",
     "ipykernel>=7.2.0",
-    "tiled[all]>=0.2.9",
 ]
